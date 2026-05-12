@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-server:
+    name: Check Server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: 'pnpm'
+          cache-dependency-path: server/pnpm-lock.yaml
+
+      - name: Install server dependencies
+        run: cd server && pnpm install
+
+      - name: Type check server
+        run: cd server && pnpm exec tsc --noEmit
+
+  build-client:
+    name: Check Client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
+          cache: 'pnpm'
+          cache-dependency-path: client/pnpm-lock.yaml
+
+      - name: Install client dependencies
+        run: cd client && pnpm install
+
+      - name: Type check client
+        run: cd client && pnpm exec tsc --noEmit
+
+      - name: Build client
+        run: cd client && pnpm build
