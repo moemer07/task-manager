@@ -57,3 +57,25 @@ jobs:
 
       - name: Build client
         run: cd client && pnpm build
+
+  format-check:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 24
+
+      - name: Install root dependencies
+        run: pnpm install
+
+      - name: Check formatting
+        run: pnpm format:check
