@@ -24,6 +24,9 @@ function App() {
     setTasks(tasks.filter((task) => task.id !== id))
   }
 
+  const completedCount = tasks.filter((task) => task.completed).length
+  const totalCount = tasks.length
+
   return (
     <div
       style={{
@@ -65,6 +68,12 @@ function App() {
           Add
         </button>
       </div>
+
+      {totalCount > 0 && (
+        <p style={{ color: '#666', marginBottom: '16px', fontSize: '14px' }}>
+          {completedCount} of {totalCount} tasks completed
+        </p>
+      )}
 
       {tasks.length === 0 && <p style={{ color: '#888' }}>No tasks yet. Add one above!</p>}
 
