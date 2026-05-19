@@ -6,9 +6,12 @@ interface Task {
   completed: boolean
 }
 
+type TaskFilter = 'all' | 'active' | 'completed'
+
 function App() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [input, setValue] = useState('')
+  const [filter, setFilter] = useState<TaskFilter>('all')
 
   const addTask = () => {
     if (!input.trim()) return
@@ -26,6 +29,12 @@ function App() {
 
   const completedCount = tasks.filter((task) => task.completed).length
   const totalCount = tasks.length
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === 'active') return !task.completed
+    if (filter === 'completed') return task.completed
+    return true
+  })
 
   return (
     <div
@@ -75,10 +84,32 @@ function App() {
         </p>
       )}
 
+      {totalCount > 0 && (
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+          {(['all', 'active', 'completed'] as const).map((value) => (
+            <button
+              key={value}
+              onClick={() => setFilter(value)}
+              style={{
+                padding: '8px 16px',
+                fontSize: '16px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                ...(filter === value
+                  ? { background: '#4f46e5', color: 'white', border: 'none' }
+                  : { background: 'white', border: '1px solid #ccc' }),
+              }}
+            >
+              {value === 'all' ? 'All' : value === 'active' ? 'Active' : 'Completed'}
+            </button>
+          ))}
+        </div>
+      )}
+
       {tasks.length === 0 && <p style={{ color: '#888' }}>No tasks yet. Add one above!</p>}
 
       <ul style={{ listStyle: 'none', padding: 0 }}>
-        {tasks.map((task) => (
+        {filteredTasks.map((task) => (
           <li
             key={task.id}
             style={{
